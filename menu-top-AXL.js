@@ -1,7 +1,7 @@
 (function () {
   const MENU_SELECTOR = 'header.ant-layout-header .ant-menu-overflow.ant-menu-root';
-  const TG_URL = 'https://t.me/yourchannel';   // <-- замените
-  const NEWS_URL = '/news';                    // <-- замените
+  const TG_URL = 'https://t.me/vashgc';   // <-- замените
+  const NEWS_URL = 'https://antolblog.accelsite.io/home';                    // <-- замените
 
   function q(sel, root = document) { return root.querySelector(sel); }
   function qa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
@@ -53,8 +53,8 @@
     const pivot = findPartnershipItem(menu);
     if (!pivot) return false;
 
-    const tg = existsTg || makeMenuItem({ text: 'Телеграм', href: TG_URL, id: 'telegram' });
-    const news = existsNews || makeMenuItem({ text: 'Наши новости', href: NEWS_URL, id: 'news' });
+    const tg = existsTg || makeMenuItem({ text: 'Канал Телеграм', href: TG_URL, id: 'telegram' });
+    const news = existsNews || makeMenuItem({ text: 'Наш Блог', href: NEWS_URL, id: 'news' });
 
     if (!existsTg) pivot.insertAdjacentElement('afterend', tg);
     if (!existsNews) tg.insertAdjacentElement('afterend', news);
@@ -119,8 +119,8 @@
 
 
 (function () {
-  const TG_URL = 'https://t.me/yourchannel';   // замените на ваш канал
-  const NEWS_URL = '/news';                    // замените на страницу новостей
+  const TG_URL = 'https://t.me/vashgc';   // замените на ваш канал
+  const NEWS_URL = 'https://antolblog.accelsite.io/home';                    // замените на страницу новостей
 
   function makeMenuItem({ text, href, id }) {
     const li = document.createElement('li');
