@@ -11,13 +11,18 @@
   border-radius: 10px;
   transition: background-color .2s ease, color .2s ease;
 }
-
+/*
 .custom-menu-item .custom-link:hover {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
          background: #d84def!important;
 }
-
+*/
+.custom-menu-item .custom-link:hover a.custom-link:before {
+         border-bottom: 0px solid #1890ff;
+         color: #fff!important;
+         background: #d84def!important;
+}
 /* пункты внутри троеточия (rest-меню) */
 .ant-menu-submenu-popup .custom-menu-item .custom-link {
   width: 100%;
