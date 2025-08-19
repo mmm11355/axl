@@ -13,8 +13,9 @@
 }
 
 .custom-menu-item .custom-link:hover {
-  background-color: #f3f6f9;
-  color: #1769aa;
+         border-bottom: 0px solid #1890ff;
+         color: #fff!important;
+         background: #d84def!important;
 }
 
 /* пункты внутри троеточия (rest-меню) */
