@@ -18,6 +18,14 @@
          background: #d84def!important;
 }
 */
+.custom-menu-item .custom-link:hover {
+         border-bottom: 0px solid #1890ff!important;
+        
+}
+.custom-menu-item .ant-menu-title-content:hover {
+     color: #fff!important;
+}
+
 .custom-menu-item .custom-link:hover a.custom-link:before {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
