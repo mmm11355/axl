@@ -3,7 +3,6 @@
 
   const TG_URL = 'https://t.me/vashgc';
   const NEWS_URL = 'https://antolblog.accelsite.io/home';
-  const ACHIEVEMENTS_URL = '/gamification';
 
   function q(sel, root = document) { return root.querySelector(sel); }
   function qa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
@@ -80,6 +79,17 @@
         text: 'Наши новости',
         id: 'news',
         href: NEWS_URL
+      }),
+      makeMenuItem({
+        text: 'Техподдержка',
+        id: 'support',
+        onClick: () => {
+          const supportModal = document.querySelector('.fixed.shadow-lg.overflow-hidden.border.f-chat-wrapper._chat_floating_1ovvy_1');
+          if (supportModal) {
+            supportModal.classList.add('open'); // Если нужно просто показать
+            supportModal.style.display = 'block'; // Подстраховка
+          }
+        }
       })
     ];
   }
@@ -87,10 +97,8 @@
   function insertIntoMenu(menu) {
     if (!menu) return false;
 
-    // Удаляем старые
     qa('li[data-injected]', menu).forEach(el => el.remove());
 
-    // Находим "Партнерская программа", чтобы вставлять ДО неё все остальные
     const pivot = menu.querySelector('li[data-menu-id$="/partnership"]') || menu.firstElementChild;
     if (!pivot) return false;
 
@@ -112,7 +120,6 @@
   }
 
   function boot() {
-    // Десктоп
     if (!insertIntoMenu(q(MENU_SELECTOR))) {
       let tries = 0;
       const timer = setInterval(() => {
@@ -121,7 +128,6 @@
       }, 250);
     }
 
-    // Мутации
     const mo = new MutationObserver(() => {
       insertIntoMenu(q(MENU_SELECTOR));
       insertIntoMobileMenu();
