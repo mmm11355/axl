@@ -25,7 +25,9 @@
 .custom-menu-item .ant-menu-horizontal>.ant-menu-item a:hover {
      color: #fff!important;
 }
-
+.ant-menu-horizontal>.ant-menu-item a:hover {
+     color: #fff!important;
+}
 .custom-menu-item .custom-link:hover a.custom-link:before {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
