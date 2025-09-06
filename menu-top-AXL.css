@@ -23,8 +23,8 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
   transition: background-color .2s ease, color .2s ease;
 }
 .custom-menu-item .custom-link:hover {
-    border-bottom: 0px solid #1890ff !important;
-    background:  !important;
+    border-bottom: 0px solid #1890ff!important;
+    background: #ffffff00!important;
 }
 .custom-menu-item .custom-link:hover,
 .custom-link a:hover {
