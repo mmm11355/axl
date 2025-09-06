@@ -7,6 +7,37 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
     display:none;
 }
 
+/*верхнее меню*/
+.ant-layout-header,
+.ant-layout-header .ant-menu {
+     background-color: #f6f6f6!important;
+      color: #000!important;
+}
+
+.ant-menu-horizontal>.ant-menu-submenu,
+.ant-menu-horizontal>.ant-menu-item {
+    background: #fff;
+    margin: 0 5px;
+    border-radius: 10px;
+    padding: 0 5px !important;
+    height: 50px;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    align-content: center;
+   
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+/*при наведении на верхнее меню*/
+
+
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover,
+ .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover:after {
+         border-bottom: 0px solid #1890ff;
+         color: #fff!important;
+         background: #6a9887!important; 
+}  
 
 
 /* новые пункты в основном меню */
