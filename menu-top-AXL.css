@@ -26,7 +26,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 .custom-menu-item .custom-link:hover {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
-       /*  background: #6a9887!important;*/
+         background: #6a9887!important;
 }
 */
 .custom-menu-item .custom-link:hover,
@@ -85,4 +85,35 @@ a.custom-link:hover {
 .ant-drawer .ant-menu-vertical .custom-menu-item .custom-link:hover {
 /*  background-color: #6a9887;*/
   color: #1769aa;
+}
+
+/* Общие стили для иконок и текста */
+.ant-menu-item .ant-menu-title-content {
+    display: flex;
+    align-items: center;
+    gap: 3px; /* Отступ между иконкой и текстом */
+}
+
+/* Цвет иконок по умолчанию */
+.ant-menu-item .ant-menu-title-content .fa-icon {
+    color: #000; /* Черный цвет */
+}
+
+/* Цвет иконок при наведении */
+.ant-menu-item:hover .ant-menu-title-content .fa-icon {
+    color: #fff; /* белый цвет */
+}
+
+/* Скрываем текст и центрируем иконки на узких экранах */
+@media (min-width: 1100px) and (max-width: 1600px) {
+    .ant-menu-item .ant-menu-title-content .menu-item-text {
+        display: none !important;
+    }
+
+    .ant-menu-item .ant-menu-title-content {
+        min-width: 50px;
+        justify-content: center;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 }
