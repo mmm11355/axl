@@ -20,7 +20,7 @@
 */
 .custom-menu-item .custom-link:hover {
          border-bottom: 0px solid #1890ff!important;
-        
+          background: #6a9887!important;
 }
 .custom-menu-item .ant-menu-horizontal>.ant-menu-item a:hover {
      color: #fff!important;
