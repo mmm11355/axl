@@ -27,7 +27,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
     background:  !important;
 }
 .custom-menu-item .custom-link:hover,
-a.custom-link:hover {
+.custom-link a:hover {
          border-bottom: 0px solid #1890ff!important;
          background: #ffffff00!important; 
 }
