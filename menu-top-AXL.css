@@ -1,3 +1,14 @@
+/*убрать значок достижений в меню верх*/
+button.ant-btn.ant-btn-primary.flex.flex-center.bg-blue-1.border-blue-2.h-fit.br-xxs.color-gray-8.p-8.flex.gap-5.fw-500 {
+    display: none;
+}
+/*значки техподдержки и уведомлений*/
+button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary-text {
+    display:none;
+}
+
+
+
 /* новые пункты в основном меню */
 .custom-menu-item {
   flex-shrink: 0 !important;
