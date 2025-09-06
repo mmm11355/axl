@@ -31,7 +31,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 */
 .custom-menu-item .custom-link:hover {
          border-bottom: 0px solid #1890ff!important;
-          background: #e2e2e2!important;
+          
 }
 .custom-menu-item .ant-menu-horizontal>.ant-menu-item a:hover {
      color: #fff!important;
@@ -42,7 +42,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 .custom-menu-item .custom-link:hover a.custom-link:before {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
-         background: #6a9887!important;
+         background: #ffffff00!important;
 }
 /* пункты внутри троеточия (rest-меню) */
 .ant-menu-submenu-popup .custom-menu-item .custom-link {
