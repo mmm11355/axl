@@ -1,6 +1,7 @@
 (function () {
     const MENU_SELECTOR_DESKTOP = 'header.ant-layout-header .ant-menu-overflow.ant-menu-root';
-    const MOBILE_MENU_SELECTOR = '.ant-drawer.ant-drawer-open .ant-menu.ant-menu-vertical';
+    const MOBILE_DRAWER_SELECTOR = '.ant-drawer';
+    const MOBILE_MENU_SELECTOR = '.ant-menu.ant-menu-vertical';
 
     const TG_URL = 'https://t.me/vashgc';
     const NEWS_URL = 'https://antolblog.accelsite.io/home';
@@ -105,7 +106,7 @@
         li.appendChild(link);
         return li;
     }
-    
+
     let isDesktopMenuInitialized = false;
     let isMobileMenuInitialized = false;
 
@@ -149,4 +150,30 @@
     } else {
         document.addEventListener('DOMContentLoaded', boot);
     }
+
+    // Встроенные CSS-стили
+    const style = document.createElement('style');
+    style.textContent = `
+        .ant-menu-item .ant-menu-title-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ant-menu-item .ant-menu-title-content .fa-icon {
+            color: #000;
+        }
+        @media (min-width: 1100px) and (max-width: 1600px) {
+            .ant-menu-item .ant-menu-title-content .menu-item-text {
+                display: none !important;
+            }
+            .ant-menu-item .ant-menu-title-content {
+                min-width: 50px;
+                justify-content: center;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
 })();
