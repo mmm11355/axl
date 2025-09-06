@@ -1,6 +1,7 @@
 (function () {
     const MENU_SELECTOR_DESKTOP = 'header.ant-layout-header .ant-menu-overflow.ant-menu-root';
     const MOBILE_MENU_SELECTOR = '.ant-drawer.ant-drawer-open .ant-menu.ant-menu-vertical';
+    const MOBILE_DRAWER_OPEN_CLASS = 'ant-drawer-open';
 
     const TG_URL = 'https://t.me/vashgc';
     const NEWS_URL = 'https://antolblog.accelsite.io/home';
@@ -106,47 +107,74 @@
         return li;
     }
 
-    let isDesktopMenuInitialized = false;
-    let isMobileMenuInitialized = false;
-
-    function syncMenus() {
-        if (!isDesktopMenuInitialized) {
-            const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-            if (desktopMenu) {
-                while (desktopMenu.firstChild) {
-                    desktopMenu.removeChild(desktopMenu.firstChild);
-                }
-                menuItems.forEach(item => {
-                    desktopMenu.appendChild(createMenuItem(item));
-                });
-                isDesktopMenuInitialized = true;
-            }
-        }
-    
-        if (!isMobileMenuInitialized) {
-            const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-            if (mobileMenu) {
-                while (mobileMenu.firstChild) {
-                    mobileMenu.removeChild(mobileMenu.firstChild);
-                }
-                menuItems.forEach(item => {
-                    mobileMenu.appendChild(createMenuItem(item));
-                });
-                isMobileMenuInitialized = true;
-            }
-        }
+    function isMenuInitialized(menu) {
+        return menu.dataset.synced === 'true';
     }
 
-    function boot() {
-        const observer = new MutationObserver(() => {
-            syncMenus();
+    function syncMenu(menu) {
+        if (!menu || isMenuInitialized(menu)) {
+            return;
+        }
+
+        // Удаляем старые, добавленные скриптом элементы
+        Array.from(menu.querySelectorAll('li[data-injected]')).forEach(el => el.remove());
+
+        const fragment = document.createDocumentFragment();
+        const existingItems = Array.from(menu.querySelectorAll('li.ant-menu-item'));
+
+        menuItems.forEach(itemConfig => {
+            const existing = existingItems.find(el => el.textContent.trim().includes(itemConfig.text));
+            if (existing) {
+                const span = existing.querySelector('.ant-menu-title-content');
+                if (span && !span.querySelector('.fa-icon')) {
+                    const icon = document.createElement('i');
+                    icon.className = `fa-icon ${itemConfig.iconClass}`;
+                    span.insertAdjacentElement('afterbegin', icon);
+                }
+                fragment.appendChild(existing);
+            } else {
+                fragment.appendChild(createMenuItem(itemConfig));
+            }
         });
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+        // Заменяем все элементы в меню
+        while (menu.firstChild) {
+            menu.removeChild(menu.firstChild);
+        }
+        menu.appendChild(fragment);
+        menu.dataset.synced = 'true';
+    }
+
+    function setupObservers() {
+        // Observer для десктопного меню
+        const desktopMenuObserver = new MutationObserver((mutationsList, observer) => {
+            const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
+            if (desktopMenu && !isMenuInitialized(desktopMenu)) {
+                syncMenu(desktopMenu);
+            }
+        });
+        desktopMenuObserver.observe(document.body, { childList: true, subtree: true });
+
+        // Observer для мобильного меню
+        const mobileMenuObserver = new MutationObserver((mutationsList) => {
+            mutationsList.forEach(mutation => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class' && mutation.target.classList.contains(MOBILE_DRAWER_OPEN_CLASS)) {
+                    const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
+                    if (mobileMenu && !isMenuInitialized(mobileMenu)) {
+                        syncMenu(mobileMenu);
+                    }
+                }
+            });
+        });
+        const mobileDrawer = document.querySelector('.ant-drawer');
+        if (mobileDrawer) {
+            mobileMenuObserver.observe(mobileDrawer, { attributes: true });
+        }
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        boot();
+        setupObservers();
     } else {
-        document.addEventListener('DOMContentLoaded', boot);
+        document.addEventListener('DOMContentLoaded', setupObservers);
     }
 })();
