@@ -22,13 +22,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
   border-radius: 10px;
   transition: background-color .2s ease, color .2s ease;
 }
-/*
-.custom-menu-item .custom-link:hover {
-         border-bottom: 0px solid #1890ff;
-         color: #fff!important;
-         background: #6a9887!important;
-}
-*/
+
 .custom-menu-item .custom-link:hover,
 a.custom-link:hover {
          border-bottom: 0px solid #1890ff!important;
@@ -43,7 +37,7 @@ a.custom-link:hover {
 .custom-menu-item .custom-link:hover a.custom-link:before {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
-         background-color: #ffffff00!important;
+         background: #ffffff00!important;
 }
 /* пункты внутри троеточия (rest-меню) */
 .ant-menu-submenu-popup .custom-menu-item .custom-link {
