@@ -1,6 +1,7 @@
 (function () {
     const MENU_SELECTOR_DESKTOP = 'header.ant-layout-header .ant-menu-overflow.ant-menu-root';
     const MOBILE_MENU_SELECTOR = '.ant-drawer.ant-drawer-open .ant-menu.ant-menu-vertical';
+    const MOBILE_DRAWER_OPEN_CLASS = 'ant-drawer-open';
 
     const TG_URL = 'https://t.me/vashgc';
     const NEWS_URL = 'https://antolblog.accelsite.io/home';
@@ -68,9 +69,6 @@
         onClick: () => document.querySelector('button.ant-btn-circle, [data-test-id="floating-chat-button"], [data-open-chat]').click()
     }];
 
-    function q(sel, root = document) { return root.querySelector(sel); }
-    function qa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
-
     function createMenuItem(itemConfig) {
         const li = document.createElement('li');
         li.className = `ant-menu-item custom-menu-item custom-menu-item-${itemConfig.id}`;
@@ -109,14 +107,20 @@
         return li;
     }
 
-    function syncMenu(menu, targetSelector) {
-        if (!menu || menu.dataset.synced) return;
+    function isMenuInitialized(menu) {
+        return menu.dataset.synced === 'true';
+    }
+
+    function syncMenu(menu) {
+        if (!menu || isMenuInitialized(menu)) {
+            return;
+        }
 
         // Удаляем старые, добавленные скриптом элементы
-        qa('li[data-injected]', menu).forEach(el => el.remove());
+        Array.from(menu.querySelectorAll('li[data-injected]')).forEach(el => el.remove());
 
-        const existingItems = qa('li.ant-menu-item', menu);
         const fragment = document.createDocumentFragment();
+        const existingItems = Array.from(menu.querySelectorAll('li.ant-menu-item'));
 
         menuItems.forEach(itemConfig => {
             const existing = existingItems.find(el => el.textContent.trim().includes(itemConfig.text));
@@ -134,28 +138,43 @@
         });
 
         // Заменяем все элементы в меню
-        while (menu.firstChild) menu.removeChild(menu.firstChild);
+        while (menu.firstChild) {
+            menu.removeChild(menu.firstChild);
+        }
         menu.appendChild(fragment);
-        menu.dataset.synced = true;
+        menu.dataset.synced = 'true';
     }
 
-    function boot() {
-        const observer = new MutationObserver(() => {
-            syncMenu(q(MENU_SELECTOR_DESKTOP), MENU_SELECTOR_DESKTOP);
-            syncMenu(q(MOBILE_MENU_SELECTOR), MOBILE_MENU_SELECTOR);
+    function setupObservers() {
+        // Observer для десктопного меню
+        const desktopMenuObserver = new MutationObserver((mutationsList, observer) => {
+            const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
+            if (desktopMenu && !isMenuInitialized(desktopMenu)) {
+                syncMenu(desktopMenu);
+            }
         });
+        desktopMenuObserver.observe(document.body, { childList: true, subtree: true });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['class']
+        // Observer для мобильного меню
+        const mobileMenuObserver = new MutationObserver((mutationsList) => {
+            mutationsList.forEach(mutation => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class' && mutation.target.classList.contains(MOBILE_DRAWER_OPEN_CLASS)) {
+                    const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
+                    if (mobileMenu && !isMenuInitialized(mobileMenu)) {
+                        syncMenu(mobileMenu);
+                    }
+                }
+            });
         });
+        const mobileDrawer = document.querySelector('.ant-drawer');
+        if (mobileDrawer) {
+            mobileMenuObserver.observe(mobileDrawer, { attributes: true });
+        }
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        boot();
+        setupObservers();
     } else {
-        document.addEventListener('DOMContentLoaded', boot);
+        document.addEventListener('DOMContentLoaded', setupObservers);
     }
 })();
