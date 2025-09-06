@@ -32,7 +32,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 .custom-menu-item .custom-link:hover,
 a.custom-link:hover {
          border-bottom: 0px solid #1890ff!important;
-         background-color: #ffffff00!important; 
+         background: #ffffff00!important; 
 }
 .custom-menu-item .ant-menu-horizontal>.ant-menu-item a:hover {
      color: #fff!important;
