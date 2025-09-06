@@ -107,12 +107,16 @@
         return li;
     }
 
-    function isMenuInitialized(menu) {
-        return menu.dataset.synced === 'true';
-    }
+    let isDesktopMenuInitialized = false;
+    let isMobileMenuInitialized = false;
 
     function syncMenu(menu) {
-        if (!menu || isMenuInitialized(menu)) {
+        if (!menu) {
+            return;
+        }
+
+        // Если меню уже проинициализировано, ничего не делаем
+        if (menu.dataset.synced === 'true') {
             return;
         }
 
@@ -147,10 +151,13 @@
 
     function setupObservers() {
         // Observer для десктопного меню
-        const desktopMenuObserver = new MutationObserver((mutationsList, observer) => {
+        const desktopMenuObserver = new MutationObserver(() => {
             const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-            if (desktopMenu && !isMenuInitialized(desktopMenu)) {
+            if (desktopMenu && !isDesktopMenuInitialized) {
                 syncMenu(desktopMenu);
+                if (desktopMenu.dataset.synced) {
+                    isDesktopMenuInitialized = true;
+                }
             }
         });
         desktopMenuObserver.observe(document.body, { childList: true, subtree: true });
@@ -160,8 +167,11 @@
             mutationsList.forEach(mutation => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class' && mutation.target.classList.contains(MOBILE_DRAWER_OPEN_CLASS)) {
                     const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-                    if (mobileMenu && !isMenuInitialized(mobileMenu)) {
+                    if (mobileMenu && !isMobileMenuInitialized) {
                         syncMenu(mobileMenu);
+                        if (mobileMenu.dataset.synced) {
+                            isMobileMenuInitialized = true;
+                        }
                     }
                 }
             });
@@ -171,6 +181,21 @@
             mobileMenuObserver.observe(mobileDrawer, { attributes: true });
         }
     }
+
+    // Добавляем обработчик на изменение размера окна
+    window.addEventListener('resize', () => {
+        isDesktopMenuInitialized = false;
+        isMobileMenuInitialized = false;
+        const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
+        const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
+        if (desktopMenu) {
+            delete desktopMenu.dataset.synced;
+        }
+        if (mobileMenu) {
+            delete mobileMenu.dataset.synced;
+        }
+        syncMenus();
+    });
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         setupObservers();
