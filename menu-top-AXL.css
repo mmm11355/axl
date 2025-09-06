@@ -31,7 +31,7 @@
 .custom-menu-item .custom-link:hover a.custom-link:before {
          border-bottom: 0px solid #1890ff;
          color: #fff!important;
-         background: #d84def!important;
+         background: #6a9887!important;
 }
 /* пункты внутри троеточия (rest-меню) */
 .ant-menu-submenu-popup .custom-menu-item .custom-link {
@@ -71,6 +71,6 @@
 }
 
 .ant-drawer .ant-menu-vertical .custom-menu-item .custom-link:hover {
-  background-color: #f3f6f9;
+  background-color: #6a9887;
   color: #1769aa;
 }
