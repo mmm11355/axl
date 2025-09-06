@@ -1,7 +1,6 @@
 (function () {
     const MENU_SELECTOR_DESKTOP = 'header.ant-layout-header .ant-menu-overflow.ant-menu-root';
-    const MOBILE_DRAWER_SELECTOR = '.ant-drawer';
-    const MOBILE_MENU_SELECTOR = '.ant-menu.ant-menu-vertical';
+    const MOBILE_MENU_SELECTOR = '.ant-drawer.ant-drawer-open .ant-menu.ant-menu-vertical';
 
     const TG_URL = 'https://t.me/vashgc';
     const NEWS_URL = 'https://antolblog.accelsite.io/home';
@@ -69,6 +68,9 @@
         onClick: () => document.querySelector('button.ant-btn-circle, [data-test-id="floating-chat-button"], [data-open-chat]').click()
     }];
 
+    function q(sel, root = document) { return root.querySelector(sel); }
+    function qa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+
     function createMenuItem(itemConfig) {
         const li = document.createElement('li');
         li.className = `ant-menu-item custom-menu-item custom-menu-item-${itemConfig.id}`;
@@ -107,42 +109,48 @@
         return li;
     }
 
-    let isDesktopMenuInitialized = false;
-    let isMobileMenuInitialized = false;
+    function syncMenu(menu, targetSelector) {
+        if (!menu || menu.dataset.synced) return;
 
-    function syncMenus() {
-        if (!isDesktopMenuInitialized) {
-            const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-            if (desktopMenu) {
-                while (desktopMenu.firstChild) {
-                    desktopMenu.removeChild(desktopMenu.firstChild);
+        // Удаляем старые, добавленные скриптом элементы
+        qa('li[data-injected]', menu).forEach(el => el.remove());
+
+        const existingItems = qa('li.ant-menu-item', menu);
+        const fragment = document.createDocumentFragment();
+
+        menuItems.forEach(itemConfig => {
+            const existing = existingItems.find(el => el.textContent.trim().includes(itemConfig.text));
+            if (existing) {
+                const span = existing.querySelector('.ant-menu-title-content');
+                if (span && !span.querySelector('.fa-icon')) {
+                    const icon = document.createElement('i');
+                    icon.className = `fa-icon ${itemConfig.iconClass}`;
+                    span.insertAdjacentElement('afterbegin', icon);
                 }
-                menuItems.forEach(item => {
-                    desktopMenu.appendChild(createMenuItem(item));
-                });
-                isDesktopMenuInitialized = true;
+                fragment.appendChild(existing);
+            } else {
+                fragment.appendChild(createMenuItem(itemConfig));
             }
-        }
-    
-        if (!isMobileMenuInitialized) {
-            const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-            if (mobileMenu) {
-                while (mobileMenu.firstChild) {
-                    mobileMenu.removeChild(mobileMenu.firstChild);
-                }
-                menuItems.forEach(item => {
-                    mobileMenu.appendChild(createMenuItem(item));
-                });
-                isMobileMenuInitialized = true;
-            }
-        }
+        });
+
+        // Заменяем все элементы в меню
+        while (menu.firstChild) menu.removeChild(menu.firstChild);
+        menu.appendChild(fragment);
+        menu.dataset.synced = true;
     }
 
     function boot() {
         const observer = new MutationObserver(() => {
-            syncMenus();
+            syncMenu(q(MENU_SELECTOR_DESKTOP), MENU_SELECTOR_DESKTOP);
+            syncMenu(q(MOBILE_MENU_SELECTOR), MOBILE_MENU_SELECTOR);
         });
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class']
+        });
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -150,30 +158,4 @@
     } else {
         document.addEventListener('DOMContentLoaded', boot);
     }
-
-    // Встроенные CSS-стили
-    const style = document.createElement('style');
-    style.textContent = `
-        .ant-menu-item .ant-menu-title-content {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .ant-menu-item .ant-menu-title-content .fa-icon {
-            color: #000;
-        }
-        @media (min-width: 1100px) and (max-width: 1600px) {
-            .ant-menu-item .ant-menu-title-content .menu-item-text {
-                display: none !important;
-            }
-            .ant-menu-item .ant-menu-title-content {
-                min-width: 50px;
-                justify-content: center;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
 })();
