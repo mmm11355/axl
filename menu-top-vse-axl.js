@@ -19,102 +19,155 @@
     };
 
     const menuItems = [{
+        id: 'profile',
         text: 'Профиль',
+        href: '#',
         iconClass: faIcons.profile,
         onClick: () => document.querySelector('[data-profile-button], [aria-label="Профиль"], .open-profile, header .ant-avatar').click()
     }, {
+        id: 'notifications',
         text: 'Уведомления',
+        href: '#',
         iconClass: faIcons.notifications,
         onClick: () => document.querySelector('[data-notifications-button], [aria-label="Уведомления"], .open-notifications, header .anticon-bell').click()
     }, {
+        id: 'courses',
         text: 'Курсы и материалы',
         href: '/courses',
         iconClass: faIcons.courses
     }, {
+        id: 'achievements',
         text: 'Достижения',
         href: GAMIFICATION_URL,
         iconClass: faIcons.achievements
     }, {
+        id: 'access',
         text: 'Доступы и оплаты',
         href: '/access',
         iconClass: faIcons.access
     }, {
+        id: 'partnership',
         text: 'Партнерская программа',
         href: '/partnership',
         iconClass: faIcons.partnership
     }, {
+        id: 'telegram',
         text: 'Телеграм',
         href: TG_URL,
         iconClass: faIcons.telegram
     }, {
+        id: 'news',
         text: 'Новости',
         href: NEWS_URL,
         iconClass: faIcons.news
     }, {
+        id: 'support',
         text: 'Техподдержка',
         iconClass: faIcons.support,
+        href: '#',
         onClick: () => document.querySelector('button.ant-btn-circle, [data-test-id="floating-chat-button"], [data-open-chat]').click()
     }];
 
-    function enhanceMenu(menu) {
-        if (!menu || menu.dataset.enhanced) {
-            return;
+    function createMenuItem(itemConfig) {
+        const li = document.createElement('li');
+        li.className = `ant-menu-item custom-menu-item custom-menu-item-${itemConfig.id}`;
+        li.setAttribute('role', 'menuitem');
+        li.dataset.injected = itemConfig.id;
+
+        const link = document.createElement('a');
+        link.href = itemConfig.href;
+        link.className = 'custom-link';
+        if (itemConfig.href && itemConfig.href.startsWith('http')) {
+            link.target = '_blank';
+            link.rel = 'noopener';
+        }
+        if (itemConfig.onClick) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                itemConfig.onClick();
+            });
         }
 
-        const items = menu.querySelectorAll('.ant-menu-item');
-        items.forEach(item => {
-            const link = item.querySelector('a');
-            const textContent = item.textContent.trim();
-            
-            const matchingItem = menuItems.find(mi => textContent.includes(mi.text));
+        const span = document.createElement('span');
+        span.className = 'ant-menu-title-content';
 
-            if (matchingItem) {
-                if (link && matchingItem.href) {
-                    link.href = matchingItem.href;
-                }
-                if (matchingItem.onClick) {
-                    item.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        matchingItem.onClick();
-                    });
-                }
-                
-                let iconElement = item.querySelector('.fa-icon');
-                if (!iconElement) {
-                    iconElement = document.createElement('i');
-                    iconElement.className = `fa-icon ${matchingItem.iconClass}`;
-                    const titleContent = item.querySelector('.ant-menu-title-content');
-                    if (titleContent) {
-                        titleContent.prepend(iconElement);
-                    }
-                }
-            }
-        });
+        const icon = document.createElement('i');
+        icon.className = `fa-icon ${itemConfig.iconClass}`;
+        span.appendChild(icon);
 
-        menu.dataset.enhanced = 'true';
+        const textNode = document.createElement('span');
+        textNode.className = 'menu-item-text';
+        textNode.textContent = itemConfig.text;
+        span.appendChild(document.createTextNode('\u00A0\u00A0'));
+        span.appendChild(textNode);
+
+        link.appendChild(span);
+        li.appendChild(link);
+        return li;
     }
 
-    function checkMenus() {
+    let currentDesktopMenu = null;
+    let currentMobileMenu = null;
+
+    function syncMenus() {
         const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-        if (desktopMenu) {
-            enhanceMenu(desktopMenu);
+        if (desktopMenu && desktopMenu !== currentDesktopMenu) {
+            currentDesktopMenu = desktopMenu;
+            while (desktopMenu.firstChild) {
+                desktopMenu.removeChild(desktopMenu.firstChild);
+            }
+            menuItems.forEach(item => {
+                desktopMenu.appendChild(createMenuItem(item));
+            });
         }
 
         const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-        if (mobileMenu) {
-            enhanceMenu(mobileMenu);
+        if (mobileMenu && mobileMenu !== currentMobileMenu) {
+            currentMobileMenu = mobileMenu;
+            while (mobileMenu.firstChild) {
+                mobileMenu.removeChild(mobileMenu.firstChild);
+            }
+            menuItems.forEach(item => {
+                mobileMenu.appendChild(createMenuItem(item));
+            });
         }
     }
 
-    function boot() {
-        checkMenus();
-        const observer = new MutationObserver(checkMenus);
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
-    }
+    // Инициализируем меню при загрузке страницы
+    syncMenus();
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        boot();
-    } else {
-        document.addEventListener('DOMContentLoaded', boot);
-    }
+    // Наблюдаем за изменениями в DOM
+    const observer = new MutationObserver(() => {
+        syncMenus();
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true
+    });
+
+    // Встроенные CSS-стили
+    const style = document.createElement('style');
+    style.textContent = `
+        .ant-menu-item .ant-menu-title-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ant-menu-item .ant-menu-title-content .fa-icon {
+            color: #000;
+        }
+        @media (min-width: 1100px) and (max-width: 1600px) {
+            .ant-menu-item .ant-menu-title-content .menu-item-text {
+                display: none !important;
+            }
+            .ant-menu-item .ant-menu-title-content {
+                min-width: 50px;
+                justify-content: center;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 })();
