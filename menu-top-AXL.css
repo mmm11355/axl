@@ -13,7 +13,11 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
      background-color: #f6f6f6!important;
       color: #000!important;
 }
+/*подчеркивание внизу голубое убираю*/
+.ant-menu-horizontal>.ant-menu-item:after, .ant-menu-horizontal>.ant-menu-submenu:after {
+   display: none;
 
+}
 .ant-menu-horizontal>.ant-menu-submenu,
 .ant-menu-horizontal>.ant-menu-item {
     background: #fff;
