@@ -56,17 +56,16 @@
         href: TG_URL,
         iconClass: faIcons.telegram
     }, {
-        id: 'news',
         text: 'Новости',
         href: NEWS_URL,
         iconClass: faIcons.news
     }, {
-        id: 'support',
         text: 'Техподдержка',
         iconClass: faIcons.support,
-        href: '#',
         onClick: () => document.querySelector('button.ant-btn-circle, [data-test-id="floating-chat-button"], [data-open-chat]').click()
     }];
+
+    let lastUrl = location.href;
 
     function createMenuItem(itemConfig) {
         const li = document.createElement('li');
@@ -106,45 +105,64 @@
         return li;
     }
 
-    let currentDesktopMenu = null;
-    let currentMobileMenu = null;
-
     function syncMenus() {
         const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-        if (desktopMenu && desktopMenu !== currentDesktopMenu) {
-            currentDesktopMenu = desktopMenu;
+        if (desktopMenu && !desktopMenu.dataset.injected) {
             while (desktopMenu.firstChild) {
                 desktopMenu.removeChild(desktopMenu.firstChild);
             }
             menuItems.forEach(item => {
                 desktopMenu.appendChild(createMenuItem(item));
             });
+            desktopMenu.dataset.injected = 'true';
         }
 
         const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-        if (mobileMenu && mobileMenu !== currentMobileMenu) {
-            currentMobileMenu = mobileMenu;
+        if (mobileMenu && !mobileMenu.dataset.injected) {
             while (mobileMenu.firstChild) {
                 mobileMenu.removeChild(mobileMenu.firstChild);
             }
             menuItems.forEach(item => {
                 mobileMenu.appendChild(createMenuItem(item));
             });
+            mobileMenu.dataset.injected = 'true';
         }
     }
 
-    // Инициализируем меню при загрузке страницы
-    syncMenus();
-
-    // Наблюдаем за изменениями в DOM
-    const observer = new MutationObserver(() => {
+    function boot() {
         syncMenus();
-    });
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true
-    });
+
+        const observer = new MutationObserver(() => {
+            const currentUrl = location.href;
+            if (currentUrl !== lastUrl) {
+                lastUrl = currentUrl;
+                // Сброс флагов и повторная синхронизация
+                const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
+                if (desktopMenu) {
+                    delete desktopMenu.dataset.injected;
+                }
+                const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
+                if (mobileMenu) {
+                    delete mobileMenu.dataset.injected;
+                }
+                syncMenus();
+            } else {
+                syncMenus();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        boot();
+    } else {
+        document.addEventListener('DOMContentLoaded', boot);
+    }
 
     // Встроенные CSS-стили
     const style = document.createElement('style');
