@@ -131,7 +131,11 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 .ant-menu-item:hover .ant-menu-title-content .fa-icon {
     color: #fff; /* белый цвет */
 }
-
+@media (max-width: 800px) {
+    .ant-menu-item:hover .ant-menu-title-content .fa-icon {
+    color: #000; /* черный цвет */
+}
+]
 /* Скрываем текст и центрируем иконки на узких экранах */
 @media (min-width: 1100px) and (max-width: 1600px) {
     .ant-menu-item .ant-menu-title-content .menu-item-text {
