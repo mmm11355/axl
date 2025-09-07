@@ -65,8 +65,6 @@
         onClick: () => document.querySelector('button.ant-btn-circle, [data-test-id="floating-chat-button"], [data-open-chat]').click()
     }];
 
-    let lastUrl = location.href;
-
     function createMenuItem(itemConfig) {
         const li = document.createElement('li');
         li.className = `ant-menu-item custom-menu-item custom-menu-item-${itemConfig.id}`;
@@ -105,9 +103,13 @@
         return li;
     }
 
+    function isMenuInjected(menu) {
+        return menu && menu.dataset.injected === 'true';
+    }
+
     function syncMenus() {
         const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-        if (desktopMenu && !desktopMenu.dataset.injected) {
+        if (desktopMenu && !isMenuInjected(desktopMenu)) {
             while (desktopMenu.firstChild) {
                 desktopMenu.removeChild(desktopMenu.firstChild);
             }
@@ -118,7 +120,7 @@
         }
 
         const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-        if (mobileMenu && !mobileMenu.dataset.injected) {
+        if (mobileMenu && !isMenuInjected(mobileMenu)) {
             while (mobileMenu.firstChild) {
                 mobileMenu.removeChild(mobileMenu.firstChild);
             }
@@ -132,37 +134,34 @@
     function boot() {
         syncMenus();
 
-        const observer = new MutationObserver(() => {
-            const currentUrl = location.href;
-            if (currentUrl !== lastUrl) {
-                lastUrl = currentUrl;
-                // Сброс флагов и повторная синхронизация
-                const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
-                if (desktopMenu) {
-                    delete desktopMenu.dataset.injected;
+        const observer = new MutationObserver((mutations) => {
+            let menuFound = false;
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
+                    const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
+                    if (desktopMenu || mobileMenu) {
+                        menuFound = true;
+                        break;
+                    }
                 }
-                const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
-                if (mobileMenu) {
-                    delete mobileMenu.dataset.injected;
-                }
-                syncMenus();
-            } else {
+            }
+
+            if (menuFound) {
                 syncMenus();
             }
         });
 
         observer.observe(document.body, {
             childList: true,
-            subtree: true,
-            attributes: true
+            subtree: true
         });
+
+        // Дополнительный обработчик для случая, когда DOM уже загружен
+        document.addEventListener('DOMContentLoaded', syncMenus);
     }
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        boot();
-    } else {
-        document.addEventListener('DOMContentLoaded', boot);
-    }
+    boot();
 
     // Встроенные CSS-стили
     const style = document.createElement('style');
