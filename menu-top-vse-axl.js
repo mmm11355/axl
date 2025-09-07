@@ -106,40 +106,42 @@
         return li;
     }
 
-    let currentDesktopMenu = null;
-    let currentMobileMenu = null;
-    
     function syncMenus() {
         const desktopMenu = document.querySelector(MENU_SELECTOR_DESKTOP);
         const mobileMenu = document.querySelector(MOBILE_MENU_SELECTOR);
 
-        if (desktopMenu && desktopMenu !== currentDesktopMenu) {
-            currentDesktopMenu = desktopMenu;
+        if (desktopMenu && !desktopMenu.dataset.injected) {
             while (desktopMenu.firstChild) {
                 desktopMenu.removeChild(desktopMenu.firstChild);
             }
             menuItems.forEach(item => {
                 desktopMenu.appendChild(createMenuItem(item));
             });
+            desktopMenu.dataset.injected = 'true';
         }
 
-        if (mobileMenu && mobileMenu !== currentMobileMenu) {
-            currentMobileMenu = mobileMenu;
+        if (mobileMenu && !mobileMenu.dataset.injected) {
             while (mobileMenu.firstChild) {
                 mobileMenu.removeChild(mobileMenu.firstChild);
             }
             menuItems.forEach(item => {
                 mobileMenu.appendChild(createMenuItem(item));
             });
+            mobileMenu.dataset.injected = 'true';
         }
     }
 
     function boot() {
-        // Наблюдаем за всем телом документа
+        // Наблюдаем за изменениями в DOM
         const observer = new MutationObserver(() => {
             syncMenus();
         });
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
