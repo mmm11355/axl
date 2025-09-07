@@ -34,7 +34,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 
 .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover,
  .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover:after {
-         border-bottom: 0px solid #1890ff;
+         border-bottom: 0px solid transparent!important;
          color: #fff!important;
          background: #6a9887!important; 
 }  
@@ -54,12 +54,12 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
   transition: background-color .2s ease, color .2s ease;
 }
 .custom-menu-item .custom-link:hover {
-    border-bottom: 0px solid #1890ff!important;
+    border-bottom: 0px solid transparent!important;
     background: #ffffff00!important;
 }
 .custom-menu-item .custom-link:hover,
 .custom-link a:hover {
-         border-bottom: 0px solid #1890ff!important;
+         border-bottom: 0px solid transparent!important;
          background: #ffffff00!important; 
 }
 .custom-menu-item .ant-menu-horizontal>.ant-menu-item a:hover {
@@ -69,7 +69,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
      color: #fff!important;
 }
 .custom-menu-item .custom-link:hover a.custom-link:before {
-         border-bottom: 0px solid #1890ff;
+         border-bottom: 0px solid transparent!important;
          color: #fff!important;
          background: #ffffff00!important;
 }
