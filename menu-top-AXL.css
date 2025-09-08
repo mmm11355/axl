@@ -39,7 +39,7 @@ button.ant-btn.ant-btn-circle.ant-btn-link.ant-btn-icon-only.bg-gray-3.secondary
 .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover,
  .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover:after {
          border-bottom: 0px solid transparent!important;
-         color: #fff!important;
+         color: #000!important;
          background: linear-gradient(90deg,#2a9df4 0%, #8ee07a 100%); 
 }  
 
